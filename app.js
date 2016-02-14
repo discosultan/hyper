@@ -28,10 +28,9 @@ function App(canvas) {
   // Near things obscure far things
   this.gl.depthFunc(this.gl.LEQUAL);
   // Cull back-facing triangles.
-  // this.gl.enable(this.gl.CULL_FACE);
-  // this.gl.cullFace(this.gl.BACK);
+  this.gl.enable(this.gl.CULL_FACE);
+  this.gl.cullFace(this.gl.BACK);
 
-  // TEMP!
   this.cube = new Cube(this.gl);
 
   window.requestAnimationFrame(this._tick.bind(this));
