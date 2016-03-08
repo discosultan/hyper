@@ -19,17 +19,15 @@ function App(canvas) {
   vec3.set(translation, -1.0, 0.0, -7.0);
   mat4.translate(this.camera.view, this.camera.view, translation);
 
-  // Default viewport size to canvas width and height.
+  // Default viewport size to canvas width and height
   this.resize(this.canvas.width, this.canvas.height);
-  // Set clear color to black, fully opaque
-  this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
-  // Enable depth testing
-  this.gl.enable(this.gl.DEPTH_TEST);
-  // Near things obscure far things
-  this.gl.depthFunc(this.gl.LEQUAL);
-  // Cull back-facing triangles.
-  this.gl.enable(this.gl.CULL_FACE);
-  this.gl.cullFace(this.gl.BACK);
+  // Set clear color to dark gray, fully opaque
+  this.gl.clearColor(0.125, 0.125, 0.125, 1.0);
+
+  this.gl.enable(this.gl.DEPTH_TEST); // Enable depth testing
+  this.gl.depthFunc(this.gl.LEQUAL); // Near things obscure far things
+  this.gl.disable(this.gl.CULL_FACE); // Disable culling
+  // this.gl.cullFace(this.gl.BACK);
 
   this.cube = new Cube(this.gl);
 
