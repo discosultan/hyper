@@ -11,14 +11,30 @@ function App(canvas) {
 
   this.previousTimestamp = 0;
   this.camera = {
+    position: vec3.create(),
+    up: vec3.create(),
+    target: vec3.create(),
     view: mat4.create(),
     projection: mat4.create(),
-    position4D: mat4.create()
-  };
 
-  var translation = vec3.create();
-  vec3.set(translation, -1.0, 0.0, -7.0);
-  mat4.translate(this.camera.view, this.camera.view, translation);
+    position4D: vec4.create(),
+    target4D: vec4.create(),
+    up4D: vec4.create(),
+    over4D: vec4.create(),
+    view4D: mat4.create(),
+  };
+  // vec3.set(this.camera.position, 0, 5, 10);
+  // vec3.set(this.camera.up, 0, 1, 0);
+  // vec3.set(this.camera.target, 0, 0, 0);
+  vec3.set(this.camera.position, 4.147724, -4.964352, -3.691729);
+  vec3.set(this.camera.up, -0.5506194, -0.7322351, 0.4007882);
+  vec3.set(this.camera.target, 3.596415, -4.284839, -3.20768);
+  mat4.lookAt(this.camera.view, this.camera.position, this.camera.target, this.camera.up);
+  vec4.set(this.camera.position4D, 4, 0, 0, 0);
+  vec4.set(this.camera.target4D, 0, 0, 0, 0);
+  vec4.set(this.camera.up4D, 0, 1, 0, 0);
+  vec4.set(this.camera.over4D, 0, 0, 1, 0);
+  mat4.lookAt4D(this.camera.view4D, this.camera.position4D, this.camera.target4D, this.camera.up4D, this.camera.over4D);
 
   // Default viewport size to canvas width and height
   this.resize(this.canvas.width, this.canvas.height);

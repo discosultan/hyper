@@ -9,21 +9,17 @@ function Cube(gl) {
   if (!this._initializeShaders())
     throw 'Shader initialization failed.';
 
-  this.rotationX = 0;
-  this.rotationY = 0;
-  this.modelView = mat4.create();
-  this.rotation4D = mat4.create();
+  this.rotation = 0;
+  this.model = mat4.create();
+  this.model4D = mat4.create();
 }
 
 Cube.prototype.update = function(deltaSeconds) {
-  this.rotationX += deltaSeconds*Math.PI; // 1 turn per second.
-  this.rotationY += deltaSeconds*Math.PI*0.5; // 1 turn per second.
+  this.rotation += deltaSeconds*Math.PI*0.5; // 0.5 turn per second.
+  mat4.fromXWRotation(this.model4D, this.rotation);
 };
 
 Cube.prototype.render = function(camera) {
-  camera.position4D = new Float32Array([1,1,1,1]);
-  camera.projection4D = mat4.create();
-
   // Set vertex buffer.
   this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.vertexBuffer);
   this.gl.vertexAttribPointer(this.shaderProgram.vertexPositionAttribute, this.vertexBuffer.itemSize, this.gl.FLOAT, false, 0, 0);
@@ -36,16 +32,14 @@ Cube.prototype.render = function(camera) {
   this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
 
   // Set shader resources.
-  this.gl.uniform1f(this.shaderProgram.angle, Math.PI/4);
-  this.gl.uniform4fv(this.shaderProgram.cameraPosition, camera.position4D);
-  this.gl.uniformMatrix4fv(this.shaderProgram.rotation, false, this.rotation4D);
-  this.gl.uniformMatrix4fv(this.shaderProgram.projection4D, false, camera.projection4D);
+  this.gl.uniform1f(this.shaderProgram.angle, Math.PI*0.25);
+  this.gl.uniform4fv(this.shaderProgram.cameraPosition4D, camera.position4D);
+
+  this.gl.uniformMatrix4fv(this.shaderProgram.model4D, false, this.model4D);
+  this.gl.uniformMatrix4fv(this.shaderProgram.view4D, false, camera.view4D);
+  this.gl.uniformMatrix4fv(this.shaderProgram.model, false, this.model);
+  this.gl.uniformMatrix4fv(this.shaderProgram.view, false, camera.view);
   this.gl.uniformMatrix4fv(this.shaderProgram.projection, false, camera.projection);
-  mat4.identity(this.modelView);
-  mat4.rotateX(this.modelView, this.modelView, this.rotationX);
-  mat4.rotateY(this.modelView, this.modelView, this.rotationY);
-  mat4.multiply(this.modelView, camera.view, this.modelView);
-  this.gl.uniformMatrix4fv(this.shaderProgram.modelView, false, this.modelView);
 
   // Render.
   this.gl.drawElements(this.gl.LINES, this.indexBuffer.numItems, this.gl.UNSIGNED_SHORT, 0);
@@ -64,12 +58,12 @@ Cube.prototype._initializeBuffers = function() {
     +1, +1, +1, -1,
     -1, +1, +1, -1,
 
+    -1, -1, -1, +1,
     +1, -1, -1, +1,
     +1, +1, -1, +1,
     -1, +1, -1, +1,
     -1, -1, +1, +1,
     +1, -1, +1, +1,
-    +1, +1, +1, +1,
     -1, +1, +1, +1
   ];
   this.vertexBuffer = this.gl.createBuffer();
@@ -78,24 +72,24 @@ Cube.prototype._initializeBuffers = function() {
   this.vertexBuffer.itemSize = 4;
 
   var colors = [
-    1, 0, 0, 1,
-    0, 1, 0, 1,
+    0.396, 0.6, 1, 1,
+    1, 0.6, 0, 1,
 
-    1, 0, 0, 1,
-    1, 0, 0, 1,
-    1, 0, 0, 1,
-    1, 0, 0, 1,
-    1, 0, 0, 1,
-    1, 0, 0, 1,
-    1, 0, 0, 1,
+    0.396, 0.6, 1, 1,
+    0.396, 0.6, 1, 1,
+    0.396, 0.6, 1, 1,
+    0.396, 0.6, 1, 1,
+    0.396, 0.6, 1, 1,
+    0.396, 0.6, 1, 1,
+    0.396, 0.6, 1, 1,
 
-    0, 1, 0, 1,
-    0, 1, 0, 1,
-    0, 1, 0, 1,
-    0, 1, 0, 1,
-    0, 1, 0, 1,
-    0, 1, 0, 1,
-    0, 1, 0, 1
+    1, 0.6, 0, 1,
+    1, 0.6, 0, 1,
+    1, 0.6, 0, 1,
+    1, 0.6, 0, 1,
+    1, 0.6, 0, 1,
+    1, 0.6, 0, 1,
+    1, 0.6, 0, 1
   ];
   this.colorBuffer = this.gl.createBuffer();
   this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.colorBuffer);
@@ -176,48 +170,50 @@ Cube.prototype._initializeShaders = function() {
 
   this.gl.useProgram(this.shaderProgram);
 
-  this.shaderProgram.vertexPositionAttribute = this.gl.getAttribLocation(this.shaderProgram, 'aPosition');
+  this.shaderProgram.vertexPositionAttribute = this.gl.getAttribLocation(this.shaderProgram, 'aPosition4D');
   this.gl.enableVertexAttribArray(this.shaderProgram.vertexPositionAttribute);
 
   this.shaderProgram.vertexColorAttribute = this.gl.getAttribLocation(this.shaderProgram, 'aColor');
   this.gl.enableVertexAttribArray(this.shaderProgram.vertexColorAttribute);
 
   this.shaderProgram.angle = this.gl.getUniformLocation(this.shaderProgram, 'uAngle');
-  this.shaderProgram.cameraPosition = this.gl.getUniformLocation(this.shaderProgram, 'uCameraPosition');
-  this.shaderProgram.rotation = this.gl.getUniformLocation(this.shaderProgram, 'uRotation');
-  this.shaderProgram.projection4D = this.gl.getUniformLocation(this.shaderProgram, 'uProjection4D');
+  this.shaderProgram.cameraPosition4D = this.gl.getUniformLocation(this.shaderProgram, 'uCameraPosition4D');
+  this.shaderProgram.model4D = this.gl.getUniformLocation(this.shaderProgram, 'uModel4D');
+  this.shaderProgram.view4D = this.gl.getUniformLocation(this.shaderProgram, 'uView4D');
+  this.shaderProgram.model = this.gl.getUniformLocation(this.shaderProgram, 'uModel');
+  this.shaderProgram.view = this.gl.getUniformLocation(this.shaderProgram, 'uView');
   this.shaderProgram.projection = this.gl.getUniformLocation(this.shaderProgram, 'uProjection');
-  this.shaderProgram.modelView = this.gl.getUniformLocation(this.shaderProgram, 'uModelView');
 
   return true;
 };
 
 Cube._shaders = {
   vertex: '\
-    attribute vec4 aPosition;\
+    attribute vec4 aPosition4D;\
     attribute vec4 aColor;\
     \
     uniform float uAngle;\
-    uniform vec4 uCameraPosition;\
-    uniform mat4 uRotation;\
-    uniform mat4 uProjection4D;\
+    uniform vec4 uCameraPosition4D;\
+    uniform mat4 uModel4D;\
+    uniform mat4 uView4D;\
     uniform mat4 uProjection;\
-    uniform mat4 uModelView;\
+    uniform mat4 uModel;\
+    uniform mat4 uView;\
     \
     varying lowp vec4 vColor;\
     \
     void main(void) {\
-      vec4 pos = uRotation * aPosition;\
-      float t = 1.0 / tan(uAngle / 2.0);\
-      vec4 v = pos - uCameraPosition;\
-      float s = t / dot(v, vec4(uProjection4D[0][3],uProjection4D[1][3],uProjection4D[2][3],uProjection4D[3][3]));\
+      vec4 position4D = uModel4D * aPosition4D;\
+      float t = 1.0 / tan(uAngle * 0.5);\
+      vec4 v = position4D - uCameraPosition4D;\
+      float s = t / dot(v, vec4(uView4D[0][3],uView4D[1][3],uView4D[2][3],uView4D[3][3]));\
       vec3 position3D = vec3(\
-        s * dot(v, vec4(uProjection4D[0][0],uProjection4D[1][0],uProjection4D[2][0],uProjection4D[3][0])),\
-        s * dot(v, vec4(uProjection4D[0][1],uProjection4D[1][1],uProjection4D[2][1],uProjection4D[3][1])),\
-        s * dot(v, vec4(uProjection4D[0][2],uProjection4D[1][2],uProjection4D[2][2],uProjection4D[3][2]))\
+        s * dot(v, vec4(uView4D[0][0],uView4D[1][0],uView4D[2][0],uView4D[3][0])),\
+        s * dot(v, vec4(uView4D[0][1],uView4D[1][1],uView4D[2][1],uView4D[3][1])),\
+        s * dot(v, vec4(uView4D[0][2],uView4D[1][2],uView4D[2][2],uView4D[3][2]))\
       );\
       \
-      gl_Position = uProjection * uModelView * vec4(position3D, 1.0);\
+      gl_Position = uProjection * uView * uModel * vec4(position3D, 1.0);\
       vColor = aColor;\
     }',
 
