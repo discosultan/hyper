@@ -12,7 +12,8 @@ function App(canvas) {
   this.previousTimestamp = 0;
   this.camera = {
     view: mat4.create(),
-    projection: mat4.create()
+    projection: mat4.create(),
+    position4D: mat4.create()
   };
 
   var translation = vec3.create();
