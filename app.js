@@ -48,6 +48,14 @@ function App(canvas) {
 
   this.cube = new Cube(this.gl);
 
+  // Add FPS counter.		
+  this.stats = new Stats();
+  this.stats.setMode(0);
+  this.stats.domElement.style.position = 'absolute';
+  this.stats.domElement.style.left = '0px';
+  this.stats.domElement.style.top = '0px';  
+  this.canvas.parentNode.insertBefore(this.stats.domElement, this.canvas.nextSibling);
+  
   window.requestAnimationFrame(this._tick.bind(this));
 }
 
@@ -74,6 +82,8 @@ App.prototype._tick = function(timestamp) {
 
   this.cube.update(deltaSeconds);
   this.cube.render(this.camera);
+  
+  this.stats.update();
 
   window.requestAnimationFrame(this._tick.bind(this));
 };

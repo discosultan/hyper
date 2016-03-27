@@ -1,6 +1,7 @@
 'use strict';
 
 function Cube(gl) {
+  var self = this;
   if (!gl)
     throw 'Missing WebGL handle.';
   this.gl = gl;
@@ -12,11 +13,30 @@ function Cube(gl) {
   this.rotation = 0;
   this.model = mat4.create();
   this.model4D = mat4.create();
+
+  this.rotationFn = mat4.fromXWRotation;
+
+  // Add GUI controller.
+  var controls = new function() {
+    this.RotateXY = function() { self.rotationFn = mat4.fromXYRotation; };
+    this.RotateYZ = function() { self.rotationFn = mat4.fromYZRotation; };
+    this.RotateZX = function() { self.rotationFn = mat4.fromZXRotation; };
+    this.RotateXW = function() { self.rotationFn = mat4.fromXWRotation; };
+    this.RotateYW = function() { self.rotationFn = mat4.fromYWRotation; };
+    this.RotateZW = function() { self.rotationFn = mat4.fromZWRotation; };
+  };
+  var gui = new dat.GUI();
+  gui.add(controls, 'RotateXY');
+  gui.add(controls, 'RotateYZ');
+  gui.add(controls, 'RotateZX');
+  gui.add(controls, 'RotateXW');
+  gui.add(controls, 'RotateYW');
+  gui.add(controls, 'RotateZW');
 }
 
 Cube.prototype.update = function(deltaSeconds) {
   this.rotation += deltaSeconds*Math.PI*0.5; // 0.5 turn per second.
-  mat4.fromXWRotation(this.model4D, this.rotation);
+  this.rotationFn(this.model4D, this.rotation);
 };
 
 Cube.prototype.render = function(camera) {

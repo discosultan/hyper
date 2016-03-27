@@ -23,31 +23,35 @@
     <code>&lt;canvas&gt;</code> element.
   </canvas>
 
-  <!-- Third party matrix and vector libary -->
-  <script src="vendor/gl-matrix-min.js"></script>
+  <!-- Third party libraries -->
+  <script src="vendor/gl-matrix-min.js"></script><!--  matrix and vector library -->
+  <script src="vendor/stats.min.js"></script><!-- FPS counter -->
+  <script src="vendor/dat.gui.min.js"></script><!-- controller library -->
   <!-- App -->
   <script src="math.js"></script>
   <!-- <script src="cube.js"></script> -->
   <script src="hypercube.js"></script>
   <script src="app.js"></script>
   <script>
-    // Get ahold of canvas element.
-    var canvas = document.getElementById('app-canvas');
-    resizeCanvas();
+	(function() {
+		// Get ahold of canvas element.
+		var canvas = document.getElementById('app-canvas');
+		resizeCanvas();
 
-    // Create the web gl app.
-    var app = new App(canvas);
+		// Create the web gl app.
+		var app = new App(canvas);
 
-    // Resize the web gl app when our canvas size changes.
-    window.addEventListener('resize', function() {
-      resizeCanvas();
-      app.resize(); // Notify app to resize.
-    }, false);
+		// Resize the web gl app when our canvas size changes.
+		window.addEventListener('resize', function() {
+		  resizeCanvas();
+		  app.resize(); // Notify app to resize.
+		}, false);
 
-    function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    }
+		function resizeCanvas() {
+		  canvas.width = window.innerWidth;
+		  canvas.height = window.innerHeight;
+		}
+	})();
   </script>
 </body>
 </html>
