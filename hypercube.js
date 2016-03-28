@@ -15,27 +15,29 @@ function Cube(gl) {
   this.model4D = mat4.create();
 
   this.rotationFn = mat4.fromXWRotation;
+  this.rotationSpeed = Math.PI*0.5; // 0.5 turns per second.
 
   // Add GUI controller.
   var controls = new function() {
-    this.RotateXY = function() { self.rotationFn = mat4.fromXYRotation; };
-    this.RotateYZ = function() { self.rotationFn = mat4.fromYZRotation; };
-    this.RotateZX = function() { self.rotationFn = mat4.fromZXRotation; };
-    this.RotateXW = function() { self.rotationFn = mat4.fromXWRotation; };
-    this.RotateYW = function() { self.rotationFn = mat4.fromYWRotation; };
-    this.RotateZW = function() { self.rotationFn = mat4.fromZWRotation; };
+    this.rotateXY = function() { self.rotationFn = mat4.fromXYRotation; };
+    this.rotateYZ = function() { self.rotationFn = mat4.fromYZRotation; };
+    this.rotateZX = function() { self.rotationFn = mat4.fromZXRotation; };
+    this.rotateXW = function() { self.rotationFn = mat4.fromXWRotation; };
+    this.rotateYW = function() { self.rotationFn = mat4.fromYWRotation; };
+    this.rotateZW = function() { self.rotationFn = mat4.fromZWRotation; };
   };
   var gui = new dat.GUI();
-  gui.add(controls, 'RotateXY');
-  gui.add(controls, 'RotateYZ');
-  gui.add(controls, 'RotateZX');
-  gui.add(controls, 'RotateXW');
-  gui.add(controls, 'RotateYW');
-  gui.add(controls, 'RotateZW');
+  gui.add(controls, 'rotateXY').name('Rotate XY');
+  gui.add(controls, 'rotateYZ').name('Rotate YZ');
+  gui.add(controls, 'rotateZX').name('Rotate ZX');
+  gui.add(controls, 'rotateXW').name('Rotate XW');
+  gui.add(controls, 'rotateYW').name('Rotate YW');
+  gui.add(controls, 'rotateZW').name('Rotate ZW');
+  gui.add(this, 'rotationSpeed', 0, Math.PI*2).name('Rotation Speed');
 }
 
 Cube.prototype.update = function(deltaSeconds) {
-  this.rotation += deltaSeconds*Math.PI*0.5; // 0.5 turn per second.
+  this.rotation += deltaSeconds*this.rotationSpeed;
   this.rotationFn(this.model4D, this.rotation);
 };
 
