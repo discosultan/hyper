@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     /* make the body fill the window */
     html, body {
@@ -29,28 +30,27 @@
   <script src="vendor/dat.gui.min.js"></script><!-- controller library -->
   <!-- App -->
   <script src="math.js"></script>
-  <!-- <script src="cube.js"></script> -->
   <script src="hypercube.js"></script>
   <script src="app.js"></script>
   <script>
-	(function() {
-		// Get ahold of canvas element.
-		var canvas = document.getElementById('app-canvas');
-		resizeCanvas();
+  (function() {
+    // Get ahold of canvas element.
+    var canvas = document.getElementById('app-canvas');
+    resizeCanvas();
 
-		// Create the web gl app.
-		var app = new App(canvas);
+    // Create the web gl app.
+    var app = new App(canvas);
 
-		// Resize the web gl app when our canvas size changes.
-		window.addEventListener('resize', function() {
-		  resizeCanvas();
-		  app.resize(); // Notify app to resize.
-		}, false);
+    // Resize the web gl app when our canvas size changes.
+    window.addEventListener('resize', function() {
+      resizeCanvas();
+      app.resize(); // Notify app to resize.
+    }, false);
 
-		function resizeCanvas() {
-		  canvas.width = window.innerWidth;
-		  canvas.height = window.innerHeight;
-		}
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+  	}
 	})();
   </script>
 </body>
