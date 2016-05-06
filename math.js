@@ -1,3 +1,5 @@
+'use strict';
+
 mat4.fromXYRotation = function(out, radians) {
   return mat4.fromZRotation(out, radians);
 };
