@@ -22,10 +22,7 @@ function App(canvas) {
     up4D: vec4.create(),
     over4D: vec4.create(),
     view4D: mat4.create(),
-  };
-  // vec3.set(this.camera.position, 0, 5, 10);
-  // vec3.set(this.camera.up, 0, 1, 0);
-  // vec3.set(this.camera.target, 0, 0, 0);
+  };  
   vec3.set(this.camera.position, 4.147724, -4.964352, -3.691729);
   vec3.set(this.camera.up, -0.5506194, -0.7322351, 0.4007882);
   vec3.set(this.camera.target, 3.596415, -4.284839, -3.20768);
@@ -43,17 +40,16 @@ function App(canvas) {
 
   this.gl.enable(this.gl.DEPTH_TEST); // Enable depth testing
   this.gl.depthFunc(this.gl.LEQUAL); // Near things obscure far things
-  this.gl.disable(this.gl.CULL_FACE); // Disable culling
-  // this.gl.cullFace(this.gl.BACK);
+  this.gl.disable(this.gl.CULL_FACE); // Disable culling  
 
-  this.cube = new Cube(this.gl);
+  this.cube = new Hypercube(this.gl);
 
   // Add FPS counter.		
   this.stats = new Stats();
   this.stats.setMode(0);
   this.stats.domElement.style.position = 'absolute';
   this.stats.domElement.style.left = '0px';
-  this.stats.domElement.style.top = '0px';  
+  this.stats.domElement.style.bottom = '0px';  
   this.canvas.parentNode.insertBefore(this.stats.domElement, this.canvas.nextSibling);
   
   window.requestAnimationFrame(this._tick.bind(this));

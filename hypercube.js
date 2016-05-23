@@ -1,6 +1,6 @@
 'use strict';
 
-function Cube(gl) {
+function Hypercube(gl) {
   var self = this;
   if (!gl)
     throw 'Missing WebGL handle.';
@@ -15,7 +15,7 @@ function Cube(gl) {
   this.model4D = mat4.create();
 
   this.rotationFn = mat4.fromXWRotation;
-  this.rotationSpeed = Math.PI*0.5; // 0.5 turns per second.
+  this.rotationSpeed = 2*Math.PI / 8; // 1 full rotation every 8 seconds.
 
   // Add GUI controller.
   var controls = new function() {
@@ -33,15 +33,15 @@ function Cube(gl) {
   gui.add(controls, 'rotateXW').name('Rotate XW');
   gui.add(controls, 'rotateYW').name('Rotate YW');
   gui.add(controls, 'rotateZW').name('Rotate ZW');
-  gui.add(this, 'rotationSpeed', 0, Math.PI*2).name('Rotation Speed');
+  gui.add(this, 'rotationSpeed', 0, 2*Math.PI).name('Rotation Speed');
 }
 
-Cube.prototype.update = function(deltaSeconds) {
+Hypercube.prototype.update = function(deltaSeconds) {
   this.rotation += deltaSeconds*this.rotationSpeed;
   this.rotationFn(this.model4D, this.rotation);
 };
 
-Cube.prototype.render = function(camera) {
+Hypercube.prototype.render = function(camera) {
   // Set vertex buffer.
   this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.vertexBuffer);
   this.gl.vertexAttribPointer(this.shaderProgram.vertexPositionAttribute, this.vertexBuffer.itemSize, this.gl.FLOAT, false, 0, 0);
@@ -54,7 +54,7 @@ Cube.prototype.render = function(camera) {
   this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
 
   // Set shader resources.
-  this.gl.uniform1f(this.shaderProgram.angle, Math.PI*0.25);
+  this.gl.uniform1f(this.shaderProgram.angle, Math.PI/4);
   this.gl.uniform4fv(this.shaderProgram.cameraPosition4D, camera.position4D);
 
   this.gl.uniformMatrix4fv(this.shaderProgram.model4D, false, this.model4D);
@@ -67,7 +67,7 @@ Cube.prototype.render = function(camera) {
   this.gl.drawElements(this.gl.LINES, this.indexBuffer.numItems, this.gl.UNSIGNED_SHORT, 0);
 };
 
-Cube.prototype._initializeBuffers = function() {
+Hypercube.prototype._initializeBuffers = function() {
   var vertices = [
     -1, -1, -1, -1,
     +1, +1, +1, +1,
@@ -169,15 +169,15 @@ Cube.prototype._initializeBuffers = function() {
   this.indexBuffer.numItems = indices.length;
 };
 
-Cube.prototype._initializeShaders = function() {
+Hypercube.prototype._initializeShaders = function() {
   // Build vertex shader.
   this.vertexShader = this.gl.createShader(this.gl.VERTEX_SHADER);
-  this.gl.shaderSource(this.vertexShader, Cube._shaders.vertex);
+  this.gl.shaderSource(this.vertexShader, Hypercube._shaders.vertex);
   this.gl.compileShader(this.vertexShader);
 
   // Build fragment shader.
   this.fragmentShader = this.gl.createShader(this.gl.FRAGMENT_SHADER);
-  this.gl.shaderSource(this.fragmentShader, Cube._shaders.fragment);
+  this.gl.shaderSource(this.fragmentShader, Hypercube._shaders.fragment);
   this.gl.compileShader(this.fragmentShader);
 
   this.shaderProgram = this.gl.createProgram();
@@ -209,7 +209,7 @@ Cube.prototype._initializeShaders = function() {
   return true;
 };
 
-Cube._shaders = {
+Hypercube._shaders = {
   vertex:
     'attribute vec4 aPosition4D; ' +
     'attribute vec4 aColor; ' +
