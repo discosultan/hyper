@@ -27,7 +27,7 @@ function App(canvas) {
   vec3.set(this.camera.up, -0.5506194, -0.7322351, 0.4007882);
   vec3.set(this.camera.target, 3.596415, -4.284839, -3.20768);
   mat4.lookAt(this.camera.view, this.camera.position, this.camera.target, this.camera.up);
-  vec4.set(this.camera.position4D, 4, 0, 0, 0);
+  vec4.set(this.camera.position4D, 3.6, 0, 0, 0);
   vec4.set(this.camera.target4D, 0, 0, 0, 0);
   vec4.set(this.camera.up4D, 0, 1, 0, 0);
   vec4.set(this.camera.over4D, 0, 0, 1, 0);
