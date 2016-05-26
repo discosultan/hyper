@@ -42,7 +42,14 @@ function App(canvas) {
   this.gl.depthFunc(this.gl.LEQUAL); // Near things obscure far things
   this.gl.disable(this.gl.CULL_FACE); // Disable culling  
 
-  this.cube = new Hypercube(this.gl);
+  // Create controller GUI.
+  this.gui = new dat.GUI();
+  // Close the GUI by default for smaller screens.
+  if (canvas.width < 1024) {
+    this.gui.close();
+  }
+  
+  this.hypercube = new Hypercube(this);    
 
   // Add FPS counter.		
   this.stats = new Stats();
@@ -76,8 +83,8 @@ App.prototype._tick = function(timestamp) {
   // Clear the color as well as the depth buffer.
   this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 
-  this.cube.update(deltaSeconds);
-  this.cube.render(this.camera);
+  this.hypercube.update(deltaSeconds);
+  this.hypercube.render(this.camera);
   
   this.stats.update();
 

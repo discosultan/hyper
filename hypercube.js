@@ -1,10 +1,10 @@
 'use strict';
 
-function Hypercube(gl) {
+function Hypercube(app) {
   var self = this;
-  if (!gl)
+  if (!app.gl)
     throw 'Missing WebGL handle.';
-  this.gl = gl;
+  this.gl = app.gl;
 
   this._initializeBuffers();
   if (!this._initializeShaders())
@@ -25,15 +25,14 @@ function Hypercube(gl) {
     this.rotateXW = function() { self.rotationFn = mat4.fromXWRotation; };
     this.rotateYW = function() { self.rotationFn = mat4.fromYWRotation; };
     this.rotateZW = function() { self.rotationFn = mat4.fromZWRotation; };
-  };
-  var gui = new dat.GUI();
-  gui.add(controls, 'rotateXY').name('Rotate XY');
-  gui.add(controls, 'rotateYZ').name('Rotate YZ');
-  gui.add(controls, 'rotateZX').name('Rotate ZX');
-  gui.add(controls, 'rotateXW').name('Rotate XW');
-  gui.add(controls, 'rotateYW').name('Rotate YW');
-  gui.add(controls, 'rotateZW').name('Rotate ZW');
-  gui.add(this, 'rotationSpeed', 0, 2*Math.PI).name('Rotation Speed');
+  };  
+  app.gui.add(controls, 'rotateXY').name('Rotate XY');
+  app.gui.add(controls, 'rotateYZ').name('Rotate YZ');
+  app.gui.add(controls, 'rotateZX').name('Rotate ZX');
+  app.gui.add(controls, 'rotateXW').name('Rotate XW');
+  app.gui.add(controls, 'rotateYW').name('Rotate YW');
+  app.gui.add(controls, 'rotateZW').name('Rotate ZW');
+  app.gui.add(this, 'rotationSpeed', 0, 2*Math.PI).name('Rotation Speed');
 }
 
 Hypercube.prototype.update = function(deltaSeconds) {
